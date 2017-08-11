@@ -3,27 +3,76 @@
 // All of the Node.js APIs are available in this process.
 
 const {dialog} = require('electron').remote
+const fs = require('fs');
 
-const convertButton = document.querySelector('#convert');
-const chooseButton = document.querySelector('#choose');
+let convertButton = getElement('#convert');
+let chooseButton = getElement('#choose');
+let filePath = '';
 
 init();
 
+function getElement (selector) {
+	return document.querySelector(selector);
+}
+
 function init () {
-	convertButton.addEventListener('click', changeState);
+	convertButton.addEventListener('click', convert);
 	chooseButton.addEventListener('click', openDialog)
 }
 
-function changeState () {
-	convertButton.innerHTML = '<div class="loader">Loading...</div>';
+function renderComponent (selector, attrs, children) {
+
+	const component = getElement(selector);
+
+	for(let prop in attrs) {
+
+		if(prop == 'disabled') {
+			component[prop] = attrs[prop];
+		} else {
+			component.setAttribute(prop, attrs[prop]);
+		}
+	}
+
+	if(children) {
+		component.innerHTML = children;
+	}
+
+}
+
+function convert () {
+	startLoading()
+}
+
+function stopLoading () {
+	
+	renderComponent('#convert', {
+		'data-state':'normal',
+		'disabled': true
+	} ,'convert');
+
+}
+
+function startLoading () {
+
+	
+	renderComponent('#convert', {
+		'data-state':'loading',
+		'disabled': true
+	} ,'<div class="loader">Loading...</div>');
+
 }
 
 function openDialog () {
 	dialog.showOpenDialog({
 		properties: ['openFile', 'openDirectory']
-	}, (filePaths) => {
+	}, (filePath) => {
 
-		console.log(filePaths);
+		filePath = filePath;
+
+		renderComponent('#convert', {
+			'disabled': false
+		});
+
 
 	})
 }

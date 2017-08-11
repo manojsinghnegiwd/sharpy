@@ -10,6 +10,11 @@ select {
 	text-transform: uppercase;
 }
 
+button:disabled, button:hover:disabled {
+	background-color: #daddde;
+	border-color: #daddde;
+}
+
 .loader,
 .loader:after {
   border-radius: 50%;
